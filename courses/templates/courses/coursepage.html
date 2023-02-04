@@ -1,0 +1,115 @@
+{% extends 'courses/base.html' %}
+{% load custom_tag %}
+{% load static %}
+{%block title %}
+{{ course.name }}
+{%endblock %}
+{% block content %}
+
+<style>
+
+    #manageflow{
+        overflow-y:auto;
+    }
+    #manageflow .active{
+        background-color: #4b4e5c73;
+        border:0px;
+    }  
+</style>
+<div hidden class="container-fluid">
+    <p class="">selected course= {{ course.price }} <p>
+    <p class="">selected course= {{ course.discount }} <p>
+    <p class="">selected course= {{ course.description }} <p>
+    <p class="">selected course= {{ course.name }} <p>
+    <p class="">selected course= {{ course.video_set.all }} <p>  
+    <p class="">selected course= {{ course.tag_set.all }} <p>
+        <p class="">selected course= {{ course.learning_set.all }} <p>
+            <p class="">selected course= {{ course.prerequisite_set.all }} <p>
+</div>
+
+<div class="container-fluid mt-3">
+    <div class="card p-3 mt-2">
+    <div class="row">
+        <div class="col-sm-7">
+            <iframe id="player" width="100%" height="330" src="https://www.youtube.com/embed/{{ video.video_id }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <div>
+              {% if previouslecture is not None %}
+              <a  href="?lecture={{previouslecture}}"class="btn btn-primary btn-sm float-start"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">   
+                <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+              </svg>Prev</a>
+               {% else %}
+              <a  href="#"class="btn btn-primary float-start btn-sm disabled"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">   
+                <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+              </svg>Prev</a>
+              {% endif %}
+              {% if nextlecture is not None %}
+              <a href="?lecture={{nextlecture}}" class="btn btn-primary btn-sm float-end">Next <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg></a>
+              {% else %}
+              <a href="#" class="btn btn-primary float-end btn-sm disabled">Next <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+              </svg></a>
+              {% endif %}
+            </div>
+        </div>
+        <div class="col-sm-5">   
+            <ul class="list-group" id="manageflow">
+                {% for lecture in course.video_set.all %}
+                <a id="lecture" href="?lecture={{ lecture.serial_no }}" class="list-group-item list-group-item-action {% if lecture.serial_no == video.serial_no %} active {% endif %}
+                ">{{lecture.serial_no}}. {{ lecture.title }} 
+                {% is_enrolled request course as enrolled %}
+                {% if not lecture.is_preview and not enrolled %}
+
+                <svg  class="float-end" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+
+                {% endif %}
+              </a> 
+                {% endfor %}
+                
+            </ul>
+            
+        </div>
+    </div>
+</div>
+        <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ course.name }} <i class="bi bi-lock-fill"></i></h5>
+              <p class="card-text">{{ course.description }} <span class="float-sm-end fw-bolder"> Course Length: {{course.length }} hours</span></p> 
+              <a {% is_enrolled request course as value %} {% if not request.user.is_authenticated %} href="/login" {% elif request.user.is_authenticated and not value  %} href="/checkout/{{ course.slug }}" {% else %} href="/media/{{ course.resource }}" download="resource" {% endif %} class="btn btn-secondary">Download Resources <i class="fa fa-download"></i></a>
+            </div>
+          </div>
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Prerequisites</h5>
+              <p class="card-text">
+                <ol>
+                {% for pre in course.prerequisite_set.all %}
+                <li>{{pre.description}}</li>
+                {% endfor %}</ol>
+                </p>
+              
+            </div>
+          </div>
+        
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Learning</h5>
+              <p class="card-text">
+                <ol>
+                {% for pre in course.learning_set.all %}
+                <li>{{pre.description}}</li>
+                {% endfor %}</ol>
+                </p>
+            </div>
+          </div>
+          <br> <br> <br>
+</div>
+<script src="{% static 'courses/js/course_page.js' %}"></script>
+{% endblock content %}

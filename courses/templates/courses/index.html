@@ -1,0 +1,50 @@
+{% extends 'courses/base.html' %}
+{% load custom_tag %}
+{%block title %}
+Courses- Home
+{%endblock %}
+{% block content %}
+<div class="container mt-2 mb-4">
+    
+    <div class="row row-cols-1 row-cols-sm-3 g-4">
+        {% for course in courses%}
+        <div class="col">
+            
+            <div class="card h-100">
+                <img src="{{ course.thumbnail.url }}" class="card-img-top" alt="...">
+                 <div class="card-body">
+                    <h5 class="card-title">{{ course.name }}</h5>
+                    <p class="card-text">{{ course.description }}</p>
+                    {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+                    <p class="card-text">
+                     Save {{ course.discount }}% <br>
+                     
+                    <strong> <del>{{ course.price|rupee }}</del> &nbsp {% cal_sell_price course.price course.discount as value %} {{ value|rupee}} </strong>
+                    {% is_enrolled request course as value%}
+                    {% if value %}
+                    <span class="badge text-bg-success float-end">Enrolled</span>
+                    {% endif %}
+                    </p> 
+                </div>
+                <div class="card-footer bg-transparent border-success p-0">
+                        <div class="row pe-0 g-0">
+                            {% is_enrolled request course as value %}   
+                            {% if value %}
+                            <a class="col border-end btn btn-light pe-0 ps-0 rounded-0" href="/course/{{ course.slug }}">
+                                Start course</a>
+                            {% else %}  
+                            <a class="col border-end btn btn-light pe-0 ps-0 rounded-0" href="/checkout/{{ course.slug }}">
+                                                    Enroll Now</a>
+                            <a class="col  btn btn-light pe-0 ps-0 rounded-0"  href="/course/{{course.slug}}">
+                                         Show More </a> 
+                            {% endif %}   
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+{% endblock content %}

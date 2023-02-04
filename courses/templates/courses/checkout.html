@@ -1,0 +1,76 @@
+{% extends 'courses/base.html' %}
+{% load custom_tag %}
+{% load crispy_forms_tags %}
+{%block title %}
+Checkout-Page
+{%endblock %}
+{% block content %}
+<div class="container mt-2">   
+   {% comment %} <div class="alert border">Checkout Page</div> {% endcomment %}
+   <div class="row border p-3 rounded">
+    <div class="col-sm-6">
+        <div class="card h-100">
+            <img src="{{ course.thumbnail.url }}" class="card-img-top" alt="...">
+             <div class="card-body">
+                <h5 class="card-title">{{ course.name }}</h5>
+                <p class="card-text">{{ course.description }}</p>
+                {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+                <p class="card-text">
+                 Save {{ course.discount }}% <br>
+                 
+                <strong> <del>{{ course.price|rupee }}</del> &nbsp {% cal_sell_price course.price course.discount as value %} {{ value|rupee}} </strong>
+                </p>
+            </div>
+            
+            </div>
+        </div>
+        <div class="col">
+            <p class="display-6 fw-bold">{{ course.name }}</p>
+        <hr>
+           <p> {{ course.description|capitalize }} </p>
+            <p class="display-6">Total Payable Amount {% cal_sell_price course.price course.discount as value %} {{ value |rupee }} </p>
+            <a href="?action=create_order" class="btn btn-warning">Continue to payment</a>
+        </div>
+    </div>
+   </div>
+</div>
+
+
+{% if order is not None %}
+       
+        
+   
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+    var options = {
+        "key": "rzp_test_HuHuo97INabPZP", // Enter the Key ID generated from the Dashboard
+         // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "name": "E-Learning Courses",
+        "description": "{{course.name}}-{{course.description}}",
+        "image": "https://www.shutterstock.com/image-vector/abstract-crown-people-colorful-logo-icon-1828733366",
+        "order_id": "{{order.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "callback_url": "http://127.0.0.1:8000/verify_payment/",
+        "prefill": {
+            "name": "Anurodh Singh",
+            "email": "anurodhsingh@gmail.com",
+            "contact": "9000090000"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+    });
+        rzp1.open();
+</script>
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends 'courses/base.html' %}
+{% load custom_tag %}
+{%block title %}
+MyCourses
+{%endblock %}
+{% block content %}
+
+<div class="container mt-2">
+  
+    <div class="display-6 mx-auto float-end fs-3">{{request.user.first_name}} {{ request.user.last_name}}</div>
+    <p class="display-6 float-end mt-0 mb-2 fs-3" style="clear:both;">Username: {{ request.user.username }}</p>
+    {%for uc in courses %}
+    <div class="shadow-lg p-3" style="clear:both;">
+          <div class="row">
+              <div class="col-sm-4 mx-auto text-center p-0">
+                 <img src="{{ uc.course.thumbnail.url }}" src="..." class="rounded"  height="170" width="250"> 
+              </div>
+              <div class="col-sm-8">
+                <p class=" fs-4">{{ uc.course.name }}</p>
+                <p class="display-6 fs-6">{{ uc.course.description }}</p>
+                <p class="text-muted"> {{ uc.date }} </p>
+                <a href="/course/{{uc.course.slug}}" class="btn btn-outline-success bottom-0" >Start Course</a>
+                <a href="/media/{{ uc.course.resource }}" download="resource" class="btn btn-outline-secondary">Download Resources <i class="fa fa-download"></i></a>
+               </div>
+          </div>
+    </div>
+    <hr>
+    {% endfor %}    
+</div>
+
+{% endblock content %}

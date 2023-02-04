@@ -1,0 +1,1 @@
+from courses.templatetags.custom_tag import capitalize
